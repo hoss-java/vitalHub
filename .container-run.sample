@@ -1,0 +1,31 @@
+# Variable Definitions
+${project}=vitalHub
+${codename}=vitalhub
+${databasename}=${codename}
+${basepath}=<basepath - should be updated>
+${path}=${basepath}/${project}
+${clients}=${path}/clients
+${clientpath}=${clients}/${codename}
+${mysql_address}=172.32.0.16
+${mongo_address}=172.32.0.17:27017
+
+# Commands using variables
+mvn@maven:mvn -f ${project}
+javac@maven:javac -d ./classes
+mysql@mysql:mysql -u root -pmypass
+cli@sshd:bash
+remotemysql@sshd:mysql -u ${databasename} -peventmanpass -h ${mysql_address}
+mongosh@sshd:mongo ${mongo_address}
+cssh@sshd:ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+mongo@mongodb:mongo
+node@nodejs:node ---workdir=${clients}
+npm@nodejs:npm
+react-${codename}@nodejs:npm ---workdir=${clientpath}
+npx@nodejs:npx ---workdir=${clients}
+jest@nodejs:npx ---workdir=${clients} jest --rootDir="."
+ts-jest@nodejs:npx ---workdir=${clientpath} ts-jest
+jest-${codename}@nodejs:npx ---workdir=${clientpath} jest --rootDir="."
+tsx-jest@nodejs:npx ---workdir=${clientpath} jest --rootDir="."
+npbash@nodejs:bash ---workdir=${clients}
+vite@nodejs:npm ---workdir=${clients}
+vite-${codename}@nodejs:npm ---workdir=${clientpath}
